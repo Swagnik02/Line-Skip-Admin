@@ -1,0 +1,57 @@
+{
+  "project_info": {
+    "project_number": "362132041958",
+    "project_id": "lineskip-20375",
+    "storage_bucket": "lineskip-20375.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:362132041958:android:fe40a58d090eb63abd4b27",
+        "android_client_info": {
+          "package_name": "com.example.line_skip"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "362132041958-9mlfurk071tj9e301kmueknnn31jevmi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.line_skip",
+            "certificate_hash": "44bec6f8d12954d507368f467d5486473f92f6ce"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLEQgiCRPWhAbw5hVzIPgl837Y62Wg4to"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:362132041958:android:f55a995a7285badbbd4b27",
+        "android_client_info": {
+          "package_name": "com.example.line_skip_admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLEQgiCRPWhAbw5hVzIPgl837Y62Wg4to"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
