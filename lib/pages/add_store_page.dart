@@ -16,6 +16,9 @@ class _AddStorePageState extends State<AddStorePage> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _locationController = TextEditingController();
+  final _upiIdController = TextEditingController();
+  final _mobileNumberController = TextEditingController();
+  final _ownerNameController = TextEditingController();
   bool _hasTrolleyPairing = false;
   File? _pickedImage;
   bool _isSaving = false;
@@ -33,25 +36,36 @@ class _AddStorePageState extends State<AddStorePage> {
     if (!_formKey.currentState!.validate() || _pickedImage == null) return;
     setState(() => _isSaving = true);
 
-    // Create a reference for storing the image in Firebase Storage
-    final ref = FirebaseStorage.instance.ref(
-      'storeImage/${_nameController.text.trim()}.jpg',
-    );
-    await ref.putFile(_pickedImage!);
-    final imageUrl = await ref.getDownloadURL();
+    try {
+      // Upload image to Firebase Storage
+      final ref = FirebaseStorage.instance.ref(
+        'storeImage/${_nameController.text.trim()}.jpg',
+      );
+      await ref.putFile(_pickedImage!);
+      final imageUrl = await ref.getDownloadURL();
 
-    // Add the new store document to Firestore (Firestore auto-generates the docId)
-    final storeRef = await FirebaseFirestore.instance.collection('stores').add({
-      'createdAt': Timestamp.now(),
-      'description': _descriptionController.text.trim(),
-      'hasTrolleyPairing': _hasTrolleyPairing,
-      'location': _locationController.text.trim(),
-      'name': _nameController.text.trim(),
-      'storeImage': imageUrl,
-    });
+      // Add store data to Firestore
+      await FirebaseFirestore.instance.collection('stores').add({
+        'createdAt': Timestamp.now(),
+        'name': _nameController.text.trim(),
+        'description': _descriptionController.text.trim(),
+        'location': _locationController.text.trim(),
+        'hasTrolleyPairing': _hasTrolleyPairing,
+        'storeImage': imageUrl,
+        'storeUpiId': _upiIdController.text.trim(),
+        'mobileNumber': _mobileNumberController.text.trim(),
+        'ownerName': _ownerNameController.text.trim(),
+      });
 
-    setState(() => _isSaving = false);
-    Navigator.pop(context);
+      Navigator.pop(context);
+    } catch (e) {
+      // Handle any error
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to save store: $e')));
+    } finally {
+      setState(() => _isSaving = false);
+    }
   }
 
   @override
@@ -71,8 +85,27 @@ class _AddStorePageState extends State<AddStorePage> {
             children: [
               TextFormField(
                 controller: _nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
-                validator: (value) => value!.isEmpty ? 'Enter name' : null,
+                decoration: const InputDecoration(labelText: 'Store Name'),
+                validator:
+                    (value) => value!.isEmpty ? 'Enter store name' : null,
+              ),
+              TextFormField(
+                controller: _ownerNameController,
+                decoration: const InputDecoration(labelText: 'Owner Name'),
+                validator:
+                    (value) => value!.isEmpty ? 'Enter owner name' : null,
+              ),
+              TextFormField(
+                controller: _mobileNumberController,
+                decoration: const InputDecoration(labelText: 'Mobile Number'),
+                keyboardType: TextInputType.phone,
+                validator:
+                    (value) => value!.isEmpty ? 'Enter mobile number' : null,
+              ),
+              TextFormField(
+                controller: _upiIdController,
+                decoration: const InputDecoration(labelText: 'Store UPI ID'),
+                validator: (value) => value!.isEmpty ? 'Enter UPI ID' : null,
               ),
               TextFormField(
                 controller: _descriptionController,
