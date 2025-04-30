@@ -10,8 +10,9 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
   bool _isLoading = false;
-  bool _isLogin = true; // 👈 To track login/register mode
+  bool _isLogin = true;
 
   Future<void> _loginOrRegister() async {
     setState(() => _isLoading = true);
@@ -19,16 +20,15 @@ class _LoginPageState extends State<LoginPage> {
       if (_isLogin) {
         await FirebaseAuth.instance.signInWithEmailAndPassword(
           email: _emailController.text.trim(),
-          password: "defaultpassword", // Default password
+          password: _passwordController.text.trim(),
         );
       } else {
         await FirebaseAuth.instance.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
-          password: "defaultpassword",
+          password: _passwordController.text.trim(),
         );
       }
     } on FirebaseAuthException catch (e) {
-      // Handle specific errors if needed
       print(e.message);
     }
     setState(() => _isLoading = false);
@@ -47,6 +47,12 @@ class _LoginPageState extends State<LoginPage> {
               controller: _emailController,
               decoration: const InputDecoration(labelText: 'Email'),
             ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: _passwordController,
+              decoration: const InputDecoration(labelText: 'Password'),
+              obscureText: true, // 👈 Hide password input
+            ),
             const SizedBox(height: 20),
             _isLoading
                 ? const CircularProgressIndicator()
@@ -58,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
             TextButton(
               onPressed: () {
                 setState(() {
-                  _isLogin = !_isLogin; // 👈 Toggle between login/register
+                  _isLogin = !_isLogin;
                 });
               },
               child: Text(
