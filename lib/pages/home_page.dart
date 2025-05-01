@@ -74,7 +74,7 @@ class _HomePageState extends State<HomePage> {
           isLoading
               ? const Center(child: CircularProgressIndicator())
               : _buildStoreTiles(context, width),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.push(
             context,
@@ -82,7 +82,8 @@ class _HomePageState extends State<HomePage> {
           );
         },
         tooltip: 'Add New Store',
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
+        label: const Text('Add Store'),
       ),
     );
   }
@@ -110,7 +111,7 @@ class _HomePageState extends State<HomePage> {
   Widget storeCard(BuildContext context, StoreModel store) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: InkWell(
+      child: GestureDetector(
         onTap:
             () => Navigator.push(
               context,
@@ -122,7 +123,7 @@ class _HomePageState extends State<HomePage> {
               bottomLeft: Radius.circular(12.0), // Rounded bottom left corner
               bottomRight: Radius.circular(12.0), // Rounded bottom right corner
             ),
-            color: Colors.white,
+
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.1),
@@ -163,10 +164,13 @@ class _HomePageState extends State<HomePage> {
                     },
                   ),
                 ),
-                Text(
-                  store.name,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                  textAlign: TextAlign.center,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    store.name,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ],
             ),

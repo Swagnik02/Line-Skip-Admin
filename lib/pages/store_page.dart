@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:line_skip_admin/models/store_model.dart';
+import 'package:line_skip_admin/pages/add_store_page.dart';
 
 class StorePage extends StatelessWidget {
   final StoreModel store;
@@ -7,7 +8,12 @@ class StorePage extends StatelessWidget {
   const StorePage({super.key, required this.store});
 
   void _editStore(BuildContext context) {
-    // Create edit page later
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder:
+            (context) => AddStorePage(storeId: store.storeId, isEdit: true),
+      ),
+    );
   }
 
   void _addItem(BuildContext context) {
@@ -16,16 +22,9 @@ class StorePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Access store properties directly as they belong to StoreModel
-    final storeName = store.name ?? 'Store'; // Accessing store name
-    final storeImage = store.storeImage ?? ''; // Accessing store image URL
-    final storeDescription =
-        store.description ??
-        'No description available'; // Accessing description
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(storeName),
+        title: Text(store.name),
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -39,9 +38,9 @@ class StorePage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Display store image with a fallback if the image URL is invalid
-            storeImage.isNotEmpty
+            store.storeImage.isNotEmpty
                 ? Image.network(
-                  storeImage,
+                  store.storeImage,
                   height: 200,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -61,21 +60,14 @@ class StorePage extends StatelessWidget {
                     return const Icon(Icons.error, size: 100);
                   },
                 )
-                : const Icon(
-                  Icons.store,
-                  size: 100,
-                ), // Fallback icon if no image URL
-
-            const SizedBox(height: 20),
-            // Description of the store
-            Text(storeDescription, style: const TextStyle(fontSize: 16)),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => _addItem(context),
-              child: const Text('Add Item'),
-            ),
+                : SizedBox(),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => _addItem(context),
+        label: const Text('Add Item'),
+        icon: const Icon(Icons.add),
       ),
     );
   }
