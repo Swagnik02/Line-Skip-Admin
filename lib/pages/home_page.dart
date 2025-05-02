@@ -1,11 +1,13 @@
-import 'dart:math' show max;
+import 'dart:math' show max, pi;
 import 'dart:developer' show log;
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:line_skip_admin/models/store_model.dart';
-import 'package:line_skip_admin/pages/add_store_page.dart';
-import 'package:line_skip_admin/pages/store_page.dart';
+import 'package:line_skip_admin/pages/store/add_store_page.dart';
+import 'package:line_skip_admin/pages/store/store_page.dart';
+import 'package:line_skip_admin/utils/barcode_scanner.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -69,7 +71,37 @@ class _HomePageState extends State<HomePage> {
     final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('My Stores')),
+      appBar: AppBar(
+        title: const Text('My Stores'),
+        actions: [
+          IconButton(
+            icon: Transform.rotate(
+              angle:
+                  90 * pi / 180, // Rotating 90 degrees (converted to radians)
+              child: const Icon(Icons.document_scanner_outlined),
+            ),
+            onPressed: () async {
+              final barcode = await scanBarcode(context);
+              showDialog(
+                context: context,
+                builder: (_) {
+                  return AlertDialog(
+                    title: const Text('Scanned Barcode'),
+                    content: Text(barcode),
+                  );
+                },
+              );
+            },
+          ),
+
+          IconButton(
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+            },
+            icon: Icon(Icons.logout),
+          ),
+        ],
+      ),
       body:
           isLoading
               ? const Center(child: CircularProgressIndicator())
@@ -119,48 +151,36 @@ class _HomePageState extends State<HomePage> {
             ),
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(12.0), // Rounded bottom left corner
-              bottomRight: Radius.circular(12.0), // Rounded bottom right corner
-            ),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
 
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.1),
-                blurRadius: 4.0,
-                offset: const Offset(0, 2),
+                blurRadius: 8.0,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
           child: Card(
             elevation: 0,
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(12.0),
-                bottomRight: Radius.circular(12.0),
-              ),
-            ),
+
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                SizedBox(
+                ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(16),
+                  ),
                   child: Image.network(
                     store.storeImage,
                     fit: BoxFit.cover,
+                    width: double.infinity,
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          value:
-                              loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded /
-                                      (loadingProgress.expectedTotalBytes ?? 1)
-                                  : null,
-                        ),
-                      );
+                      return const Center(child: CircularProgressIndicator());
                     },
                     errorBuilder: (context, error, stackTrace) {
-                      return const Icon(Icons.error);
+                      return const Icon(Icons.error, size: 48);
                     },
                   ),
                 ),
